@@ -1,0 +1,21 @@
+{
+  "name": "first-chat",
+  "version": "1.0.0",
+  "description": "chat with socket io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rodrigo Azevedo",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.15.2",
+    "express-load": "^1.1.16",
+    "express-session": "^1.15.6",
+    "express-validator": "^5.2.0",
+    "mongoose": "^5.2.4",
+    "socket.io": "^2.1.1"
+  }
+}

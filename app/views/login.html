@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+	<style>
+      form {
+        margin: 0 auto; border: 1px solid black; width: 30%; text-align: center;
+      }
+      form input {
+        margin: 1%; width: 60%;
+      }
+    </style>
+</head>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  $(function () {
+    $('#form').submit(function(event) {
+      event.preventDefault();
+      var usuario = 
+      {
+          "username": $('#username').val(),
+          "senha": $('#password').val()
+      }
+
+      $.ajax({
+          method:"POST",
+          url: "/login",
+          data: JSON.stringify(usuario), //Função para transformar o objeto em JSON
+          contentType: 'application/json; charset=utf-8',
+          dataType: "json",
+          success: function(data) {
+              window.location.href = "/";
+          },
+          error: function(data) {
+              var erros = data.responseJSON;
+              alert(erros.erros[0].msg);
+              console.log(data);
+          }
+      });
+  });
+  });
+</script>
+<body>
+  <h1 style="text-align: center;">Login page</h1>
+  <form action="" id="form">
+    Username <input type="text" name="username" id="username"><br>
+    Senha <input type="password" name="password" id="password"><br>
+    <input type="submit" id="m"value="Entrar"/>
+  </form>
+</body>
+</html>
