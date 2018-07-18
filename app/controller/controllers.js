@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-
+const app = require('./../../config.js');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 require('./../model/Message');
 require('./../model/Usuario');
 
@@ -60,6 +62,7 @@ exports.realizarLogin = (application, req, res) => {
     });
 };
 
+
 exports.UserLogged = (req,res, next) =>{
     if (!req.session.loggedUser) {
         res.redirect('/login');
@@ -73,3 +76,8 @@ exports.sair = (application, req, res) => {
         res.redirect('/');
     });
 };
+
+exports.AllUsers = async (application, req, res) =>{
+    const users = await Usuario.find();
+    return users;
+}

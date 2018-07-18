@@ -17,13 +17,13 @@ mongoose.connection.on('error',err => {
 
 //  Iniciando objeto do express.
 const load = require('express-load');
-
+const path = require('path');
 //Precisamos o module.exports para retornarmos qualquer modulo a outro lugar do projeto
 var app = express();
 
 //  Configurando o middleware do express.static.
-// app.use(express.static(path.join(__dirname, '../app/public/')));
-//  Configurando o middleware do body-parser.
+app.use(express.static(path.join(__dirname, '../app/public/')));
+//Configurando o middleware do body-parser.
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 

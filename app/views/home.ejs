@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Escolha o tipo de tela</title>
+	<style>
+      form {
+        margin: 0 auto; border: 1px solid black; width: 30%; text-align: center;
+      }
+      form input {
+        margin: 1%; width: 60%;
+      }
+      body div {
+        text-align: center; width: 38%; float: left; text-align: center; margin: 5%;
+      }
+    </style>
+</head>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  $(document).on("change", "#select", function(){
+    if(this.value){
+      window.location.href = "/privado?rv="+this.value;
+    }
+  });
+</script>
+<body>
+  <h1 style="text-align: center;">Home</h1>
+  <h3 style="text-align: center;">Choose the type of chat</h3>
+  <div>
+    <a href="/publico">Public chat</a>
+  </div>
+  <div>
+    <select id="select">
+      <option value="">Choose a user to chat with</option>
+      <% for(var i=0; i<users.length; i++) { %>
+        <option value="<%= users[i].username %>"><%= users[i].nome %></option>
+      <% } %>
+    </select>
+  </div>
+</body>
+</html>

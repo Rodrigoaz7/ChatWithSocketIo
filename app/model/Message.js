@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const MessageSchema = new Schema({ 
     msg: String,
-    FoiLida: Boolean,
+    publica: Boolean,
     sender: String,
     reciever: String
 });

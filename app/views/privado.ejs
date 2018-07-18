@@ -336,8 +336,8 @@
   $(function () {
     var socket = io();
 
-    socket.on('old messages', function(msg){
-      console.log(msg);
+    socket.on('old private messages', function(msg){
+        console.log(msg);
       if(msg.length > 0){
         for(var i=0; i<msg.length; i++){
           var li = document.createElement("li");
@@ -359,7 +359,7 @@
     });
 
     $('form').submit(function(){
-      socket.emit('chat message', $('#m').val(), $("#username").text(), '');
+      socket.emit('chat send private message', $('#m').val(), $("#username").text(), $("#reciever").text());
 
       var li = document.createElement("li");
       li.classList.add("self");
@@ -377,10 +377,11 @@
 
       $('#m').val('');
 
+
       return false;
     });
 
-    socket.on('chat message', function(msg){
+    socket.on('chat send private message', function(msg){
       var li = document.createElement("li");
       li.classList.add("other");
       var div = document.createElement("div");
@@ -398,11 +399,12 @@
 
   });
 </script>
-<body>
+<body id="body">
     <p id="username" style="display: none;"><%= user.username %></p>
+    <p id="reciever" style="display: none;"><%= reciever %></p>
     <div class="menu">
-    <a href="/" style="color: white; margin: 2%; margin-top: 2%;">Go back</a>
-      <div class="name"><%= user.nome %>, you are in a public chat...</div>
+      <a href="/" style="color: white; margin: 2%; margin-top: 2%;">Go back</a>
+      <div class="name"><%= user.nome %>, you are chatting with <%= reciever %></div>
     </div>
     <form action="">
       <ol class="chat" id="chat">

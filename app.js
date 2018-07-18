@@ -7,7 +7,12 @@ require(__dirname + '/app/model/Message');
 var Mensagem = mongoose.model("Mensagens");
 
 //Doing routes here
-app.get('/', controller.UserLogged, function(req, res){
+app.get('/', controller.UserLogged, async function(req, res){
+  const users = await controller.AllUsers(app, req, res);
+  res.render(__dirname + '/app/views/home.ejs', {user: req.session, users: users});
+});
+
+app.get('/publico', controller.UserLogged, function(req, res){
 	res.render(__dirname + '/app/views/index.ejs', {user: req.session});
 });
 
@@ -27,28 +32,53 @@ app.post('/cadastro', function(req, res){
   controller.cadastroUser(app, req, res);
 });
 
+var msgs = []; //buffer de mensagens privadas antigas entre dois users
+
+app.get('/privado', controller.UserLogged, async function(req, res){
+  console.log(req.query.rv + "    " + req.session.username);
+  msgs = await Mensagem.find(
+  {$or: 
+      [{sender: req.session.username, reciever: req.query.rv, publica: false},
+      {sender: req.query.rv, reciever: req.session.username, publica: false}
+  ]});
+
+  res.render(__dirname + '/app/views/privado.ejs', {user: req.session, reciever: req.query.rv});
+});
+
+
 io.on('connection', async function(socket){
-  //console.log('Um user se conectou');
-  //socket.on('disconnect', function(){
-  //  console.log('user disconnected');
-  //});
-  // socket.on('chat message', function(msg){
-  //   console.log('message: ' + msg);
-  // });
-  //socket.broadcast.emit('hi');//emite para todos, menos pra um em especial
 
-  const mensagens = await Mensagem.find();
-  io.emit('old messages', mensagens); // emite mensagem para todos, incluindo o cara que enviou
+  // Mensagens antigas publicas
+  const mensagens_publicas = await Mensagem.find({publica: true});
 
+  io.emit('old messages', mensagens_publicas); // carrega mensagens publicas publicas
+
+  io.emit('old private messages', msgs);  //carrega mensagens privadas antigas
+
+  // Salva nova mensagem publica
   socket.on('chat message', function(msg, sender, reciever){
     console.log(sender + "  " + msg + "  " + reciever);
     var newMessage = new Mensagem();
     newMessage.msg = msg;
     newMessage.sender = sender;
     newMessage.reciever = reciever;
+    newMessage.publica = true;
     newMessage.save();
 
     socket.broadcast.emit('chat message', newMessage);
+  });
+
+  // Salva nova mensagem privada
+  socket.on('chat send private message', function(msg, sender, reciever){
+    console.log(sender + "  " + msg + "  " + reciever);
+    var newMessage = new Mensagem();
+    newMessage.msg = msg;
+    newMessage.sender = sender;
+    newMessage.reciever = reciever;
+    newMessage.publica = false;
+    newMessage.save();
+
+    socket.broadcast.emit('chat send private message', newMessage);
   });
 });
 
