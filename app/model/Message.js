@@ -7,7 +7,11 @@ const MessageSchema = new Schema({
     msg: String,
     publica: Boolean,
     sender: String,
-    reciever: String
+    reciever: String,
+    foi_lida: {
+    	type: Boolean,
+    	default: true
+    }
 });
 
 module.exports = mongoose.model('Mensagens', MessageSchema);

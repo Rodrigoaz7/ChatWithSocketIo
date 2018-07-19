@@ -81,3 +81,12 @@ exports.AllUsers = async (application, req, res) =>{
     const users = await Usuario.find();
     return users;
 }
+
+exports.NotReadMsgs = async(application, req, res) =>{
+    const m = await Mensagem.find({
+        foi_lida: false, 
+        publica: false,
+        reciever: req.session.username
+    });
+    return m;
+}

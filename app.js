@@ -7,8 +7,11 @@ require(__dirname + '/app/model/Message');
 var Mensagem = mongoose.model("Mensagens");
 
 //Doing routes here
+var msgs_nao_lidas = []; //preenche na rota
+
 app.get('/', controller.UserLogged, async function(req, res){
   const users = await controller.AllUsers(app, req, res);
+  msgs_nao_lidas = await controller.NotReadMsgs(app, req, res);
   res.render(__dirname + '/app/views/home.ejs', {user: req.session, users: users});
 });
 
@@ -55,14 +58,17 @@ io.on('connection', async function(socket){
 
   io.emit('old private messages', msgs);  //carrega mensagens privadas antigas
 
+  io.emit('non read messages', msgs_nao_lidas); //mensagens privadas nao lidas
+
   // Salva nova mensagem publica
   socket.on('chat message', function(msg, sender, reciever){
-    console.log(sender + "  " + msg + "  " + reciever);
+
     var newMessage = new Mensagem();
     newMessage.msg = msg;
     newMessage.sender = sender;
     newMessage.reciever = reciever;
     newMessage.publica = true;
+    newMessage.foi_lida = true;
     newMessage.save();
 
     socket.broadcast.emit('chat message', newMessage);
@@ -70,12 +76,13 @@ io.on('connection', async function(socket){
 
   // Salva nova mensagem privada
   socket.on('chat send private message', function(msg, sender, reciever){
-    console.log(sender + "  " + msg + "  " + reciever);
+
     var newMessage = new Mensagem();
     newMessage.msg = msg;
     newMessage.sender = sender;
     newMessage.reciever = reciever;
     newMessage.publica = false;
+    newMessage.foi_lida = false;
     newMessage.save();
 
     socket.broadcast.emit('chat send private message', newMessage);

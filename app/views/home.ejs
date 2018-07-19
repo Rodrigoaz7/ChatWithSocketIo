@@ -14,6 +14,7 @@
       }
     </style>
 </head>
+
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   $(document).on("change", "#select", function(){
@@ -35,6 +36,22 @@
         <option value="<%= users[i].username %>"><%= users[i].nome %></option>
       <% } %>
     </select>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      socket.on('non read messages', function(msg){
+        if(msg.length > 0){
+          for(var i=0; i<msg.length; i++){
+            for(var j=1; j<$("#select option").size(); j++){
+              if($("#select option")[j].value == msg[i].sender){
+                $("#select option")[j].innerHTML += " (New)";
+                break;
+              }
+            }
+          }
+        }
+      });
+    </script>
   </div>
 </body>
 </html>
